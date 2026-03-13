@@ -1,0 +1,263 @@
+{
+  "name": "blog-admin-mcp",
+  "version": "1.0.0",
+  "description": "博客管理系统 MCP 配置文件",
+  "tools": [
+    {
+      "name": "getArticles",
+      "description": "获取文章列表",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "number", "default": 1 },
+          "limit": { "type": "number", "default": 10 },
+          "category": { "type": "string" },
+          "tag": { "type": "string" },
+          "status": { "type": "string", "enum": ["draft", "published"] }
+        }
+      }
+    },
+    {
+      "name": "getArticle",
+      "description": "获取文章详情",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "文章ID" }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "name": "createArticle",
+      "description": "创建新文章",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "slug": { "type": "string" },
+          "content": { "type": "string" },
+          "excerpt": { "type": "string" },
+          "cover": { "type": "string" },
+          "categoryId": { "type": "string" },
+          "tagIds": { "type": "array", "items": { "type": "string" } },
+          "status": { "type": "string", "enum": ["draft", "published"] }
+        },
+        "required": ["title", "content"]
+      }
+    },
+    {
+      "name": "updateArticle",
+      "description": "更新文章",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "slug": { "type": "string" },
+          "content": { "type": "string" },
+          "excerpt": { "type": "string" },
+          "cover": { "type": "string" },
+          "categoryId": { "type": "string" },
+          "tagIds": { "type": "array", "items": { "type": "string" } },
+          "status": { "type": "string", "enum": ["draft", "published"] }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "name": "deleteArticle",
+      "description": "删除文章",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "name": "getCategories",
+      "description": "获取分类列表"
+    },
+    {
+      "name": "createCategory",
+      "description": "创建分类",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "slug": { "type": "string" },
+          "description": { "type": "string" }
+        },
+        "required": ["name", "slug"]
+      }
+    },
+    {
+      "name": "deleteCategory",
+      "description": "删除分类",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "name": "getTags",
+      "description": "获取标签列表"
+    },
+    {
+      "name": "createTag",
+      "description": "创建标签",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "slug": { "type": "string" }
+        },
+        "required": ["name", "slug"]
+      }
+    },
+    {
+      "name": "deleteTag",
+      "description": "删除标签",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "name": "getComments",
+      "description": "获取评论列表",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "articleId": { "type": "string" },
+          "status": { "type": "string", "enum": ["pending", "approved", "spam"] }
+        }
+      }
+    },
+    {
+      "name": "createComment",
+      "description": "创建评论",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "articleId": { "type": "string" },
+          "content": { "type": "string" },
+          "author": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "email": { "type": "string" },
+              "url": { "type": "string" }
+            }
+          }
+        },
+        "required": ["articleId", "content", "author"]
+      }
+    },
+    {
+      "name": "moderateComment",
+      "description": "审核评论",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "status": { "type": "string", "enum": ["approved", "spam", "trash"] }
+        },
+        "required": ["id", "status"]
+      }
+    },
+    {
+      "name": "deleteComment",
+      "description": "删除评论",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "name": "login",
+      "description": "用户登录",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string" },
+          "password": { "type": "string" }
+        },
+        "required": ["email", "password"]
+      }
+    },
+    {
+      "name": "getCurrentUser",
+      "description": "获取当前登录用户信息"
+    },
+    {
+      "name": "logout",
+      "description": "用户登出"
+    },
+    {
+      "name": "getSiteInfo",
+      "description": "获取网站信息"
+    },
+    {
+      "name": "updateTheme",
+      "description": "更新网站主题",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "theme": { "type": "string", "enum": ["light", "dark", "system"] }
+        },
+        "required": ["theme"]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "blog://articles",
+      "description": "文章列表资源"
+    },
+    {
+      "uri": "blog://categories",
+      "description": "分类列表资源"
+    },
+    {
+      "uri": "blog://tags",
+      "description": "标签列表资源"
+    },
+    {
+      "uri": "blog://comments",
+      "description": "评论列表资源"
+    },
+    {
+      "uri": "blog://site",
+      "description": "网站信息资源"
+    }
+  ],
+  "prompts": [
+    {
+      "name": "create-new-article",
+      "description": "创建新文章的引导提示",
+      "template": "请帮我创建一篇新文章，包含以下信息：标题、内容、分类和标签。"
+    },
+    {
+      "name": "review-comments",
+      "description": "审核评论的引导提示",
+      "template": "请帮我审核待处理的评论。"
+    },
+    {
+      "name": "design-system-query",
+      "description": "查询UI/UX设计系统",
+      "template": "请使用 Skills/ui-ux-pro-max 查询适合博客网站的设计规范。"
+    }
+  ]
+}
