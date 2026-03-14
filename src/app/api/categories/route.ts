@@ -4,10 +4,12 @@ import { mockCategories } from '@/lib/data';
 const categories = [...mockCategories];
 
 export async function GET() {
-  return NextResponse.json({
+  const response = NextResponse.json({
     success: true,
     data: categories,
   });
+  response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+  return response;
 }
 
 export async function POST(request: NextRequest) {

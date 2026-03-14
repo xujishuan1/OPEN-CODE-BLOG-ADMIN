@@ -71,8 +71,8 @@ export default function ArticleEditPage({ params }: ArticlePageProps) {
     e.preventDefault();
     setLoading(true);
 
-    if (params.id === 'new') {
-      try {
+    try {
+      if (params.id === 'new') {
         const res = await fetch('/api/articles', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -91,15 +91,11 @@ export default function ArticleEditPage({ params }: ArticlePageProps) {
         
         if (data.success) {
           router.push('/dashboard/articles');
+          return;
         } else {
           alert(data.error?.message || '保存失败');
         }
-      } catch (error) {
-        console.error('保存失败:', error);
-        alert('保存失败，请重试');
-      }
-    } else {
-      try {
+      } else {
         const res = await fetch(`/api/articles/${params.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -118,15 +114,17 @@ export default function ArticleEditPage({ params }: ArticlePageProps) {
         
         if (data.success) {
           router.push('/dashboard/articles');
+          return;
         } else {
           alert(data.error?.message || '保存失败');
         }
-      } catch (error) {
-        console.error('保存失败:', error);
-        alert('保存失败，请重试');
       }
+    } catch (error) {
+      console.error('保存失败:', error);
+      alert('保存失败，请重试');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const toggleTag = (tagId: string) => {

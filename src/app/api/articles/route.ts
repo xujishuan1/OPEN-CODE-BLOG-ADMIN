@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
   const start = (page - 1) * limit;
   const items = filtered.slice(start, start + limit);
 
-  return NextResponse.json({
+  const response = NextResponse.json({
     success: true,
     data: {
       items,
@@ -46,6 +46,9 @@ export async function GET(request: NextRequest) {
       totalPages: Math.ceil(total / limit),
     },
   });
+
+  response.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+  return response;
 }
 
 export async function POST(request: NextRequest) {

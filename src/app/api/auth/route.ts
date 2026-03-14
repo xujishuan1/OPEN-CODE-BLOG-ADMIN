@@ -10,6 +10,13 @@ const mockUsers = [
   },
   {
     id: '2',
+    email: 'user@example.com',
+    password: 'user123',
+    name: '普通用户',
+    role: 'user',
+  },
+  {
+    id: '3',
     email: 'editor@example.com',
     password: 'editor123',
     name: '编辑',

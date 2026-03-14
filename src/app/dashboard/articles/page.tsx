@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, Button, Badge, Input, Select } from '@/components/ui';
 import { mockCategories } from '@/lib/data';
 import type { Article } from '@/types';
 
 export default function ArticlesPage() {
+  const router = useRouter();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('all');
@@ -124,61 +126,81 @@ export default function ArticlesPage() {
           ) : (
             <div className="space-y-4">
               {filteredArticles.map((article) => (
-                <div
+                <Link
                   key={article.id}
-                  className="flex items-center justify-between p-4 rounded-lg border hover:bg-muted/50 transition-colors"
-                  style={{ borderColor: 'var(--border)' }}
+                  href={`/dashboard/articles/${article.id}`}
+                  className="block"
                 >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Link
-                        href={`/dashboard/articles/${article.id}`}
-                        className="text-sm font-medium hover:text-primary truncate"
-                      >
-                        {article.title || '无标题'}
-                      </Link>
-                      <Badge variant={article.status === 'published' ? 'success' : 'warning'}>
-                        {article.status === 'published' ? '已发布' : '草稿'}
-                      </Badge>
-                    </div>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      {article.category && (
+                  <div
+                    className="flex items-center justify-between p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer"
+                    style={{ borderColor: 'var(--border)' }}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-sm font-medium truncate">
+                          {article.title || '无标题'}
+                        </span>
+                        <Badge variant={article.status === 'published' ? 'success' : 'warning'}>
+                          {article.status === 'published' ? '已发布' : '草稿'}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                        {article.category && (
+                          <span className="flex items-center gap-1">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                            </svg>
+                            {article.category.name}
+                          </span>
+                        )}
                         <span className="flex items-center gap-1">
                           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                           </svg>
-                          {article.category.name}
+                          {article.viewCount}
                         </span>
-                      )}
-                      <span className="flex items-center gap-1">
-                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                        {article.viewCount}
-                      </span>
-                      <span>{new Date(article.createdAt).toLocaleDateString('zh-CN')}</span>
+                        <span>{new Date(article.createdAt).toLocaleDateString('zh-CN')}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {article.status === 'draft' && (
+                    <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
+                      {article.status === 'draft' && (
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="text-green-500 hover:text-green-600"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePublish(article.id);
+                          }}
+                        >
+                          发布
+                        </Button>
+                      )}
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          router.push(`/dashboard/articles/${article.id}`);
+                        }}
+                      >
+                        编辑
+                      </Button>
                       <Button 
                         variant="ghost" 
                         size="sm" 
-                        className="text-green-500 hover:text-green-600"
-                        onClick={() => handlePublish(article.id)}
+                        className="text-red-500 hover:text-red-600" 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleDelete(article.id);
+                        }}
                       >
-                        发布
+                        删除
                       </Button>
-                    )}
-                    <Link href={`/dashboard/articles/${article.id}`}>
-                      <Button variant="ghost" size="sm">编辑</Button>
-                    </Link>
-                    <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600" onClick={() => handleDelete(article.id)}>
-                      删除
-                    </Button>
+                    </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
